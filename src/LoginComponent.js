@@ -1,4 +1,5 @@
 import React from "react";
+import UserList from "./UserList";
 
 export default class LoginComponent extends React.Component {
 
@@ -8,6 +9,8 @@ export default class LoginComponent extends React.Component {
         this.state = {
             username: '',
             password: '',
+            token: null,
+
         };
 
         this.handleChange = this.handleChange.bind(this); //Para poder ser chamada no render
@@ -30,7 +33,10 @@ export default class LoginComponent extends React.Component {
             body: JSON.stringify({username: this.state.username, password: this.state.password})
         })
             .then(response => response.json())
-            .then(data => localStorage.setItem('token', data.token))
+            .then(data =>{
+              localStorage.setItem('token', data.token);
+                this.setState({token:data.token})
+            } )
 
         event.preventDefault();
     }
@@ -39,15 +45,31 @@ export default class LoginComponent extends React.Component {
         this.setState({password: event.target.value})
     }
 
+    logout(){
+        localStorage.removeItem('token')
+        this.setState({token:null})
+    }
+
     render() {
-        return (
-            <form onSubmit={this.handleSubmit}>
-                <label>Username:<input type="text" value={this.state.username}
-                                       onChange={this.handleChange}></input></label>
-                <label>Password:<input type="password" value={this.state.password}
-                                       onChange={this.handlePassword}></input></label>
-                <input type="submit" value="Submit"/>
-            </form>
-        )
+        var token = localStorage.getItem('token')
+        if (!token) {
+            return (
+                <form onSubmit={this.handleSubmit}>
+                    <label>Username:<input type="text" value={this.state.username}
+                                           onChange={this.handleChange}></input></label>
+                    <label>Password:<input type="password" value={this.state.password}
+                                           onChange={this.handlePassword}></input></label>
+                    <input type="submit" value="Submit"/>
+                </form>
+            )
+        }else{
+            return (
+                <div>
+                    <UserList />
+                    <button onClick={() => this.logout()}>LogOut</button>
+                </div>
+
+            )
+        }
     }
 }

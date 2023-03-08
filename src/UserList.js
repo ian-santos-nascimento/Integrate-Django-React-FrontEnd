@@ -1,10 +1,10 @@
 import React from "react";
 import ListComponent from "./ListComponent";
-import LoginComponent from "./LoginComponent";
 
 export default class UserList extends React.Component {
     state = {
-        list: []
+        list: [],
+        token:null,
     }
 
     async componentDidMount() {
@@ -22,20 +22,15 @@ export default class UserList extends React.Component {
     }
 
     render() {
-        var token = localStorage.getItem('token');
-        if (token === '') {
-            return <LoginComponent/>
-        } else {
-            console.log(this.state.list);
-            const listApi = this.state.list;
-            return (
-                <div>
-                    {listApi.map(list =>
-                        <ListComponent key={list.id} listName={list.name} items={list.item_set}/>
-                    )}
-                </div>
-            )
-        }
+        const listApi = this.state.list;
+        return (
+            <div>
+                {listApi.map(list =>
+                    <ListComponent key={list.id} listName={list.name} items={list.item_set}/>
+                )}
+            </div>
+        )
+
     }
 
 }
